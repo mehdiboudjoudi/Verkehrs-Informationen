@@ -9,5 +9,7 @@ namespace Verkehrs_Informationen.APIs
     internal class AutobahnAPI
     {
 
+
+
     }
 }
