@@ -1,11 +1,10 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using Verkehrs_Informationen.APIs;
+using Verkehrs_Informationen.Models;
 
 namespace Verkehrs_Informationen.Views
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
         public MainWindow()
@@ -13,22 +12,54 @@ namespace Verkehrs_Informationen.Views
             InitializeComponent();
         }
 
-        private async void LoadWarnings_Click(object sender, RoutedEventArgs e)
+        private async void LoadData_Click(object sender, RoutedEventArgs e)
         {
-            string roadId = RoadInput.Text;
-
             var service = new AutobahnAPI();
+            string road = RoadInput.Text.ToUpper().Trim();
 
-            var warnings = await service.GetWarnings(roadId);
+            if (string.IsNullOrEmpty(road)) return;
 
-            if (warnings != null)
+            LoadingIndicator.Visibility = Visibility.Visible;
+            MasterGrid.ItemsSource = null;                  
+            MasterGrid.IsEnabled = false;               
+
+            try
             {
-                WarningList.ItemsSource = warnings;
+                var warningsTask = service.GetWarnings(road);
+                var closuresTask = service.GetClosures(road);
+
+                await Task.WhenAll(warningsTask, closuresTask);
+
+                var allItems = new List<WarningItem>();
+                if (warningsTask.Result != null) allItems.AddRange(warningsTask.Result);
+                if (closuresTask.Result != null) allItems.AddRange(closuresTask.Result);
+
+                MasterGrid.ItemsSource = allItems;
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Fehler beim Laden der Daten.");
+                MessageBox.Show($"Fehler beim Laden: {ex.Message}");
             }
+            finally
+            {
+                LoadingIndicator.Visibility = Visibility.Collapsed;
+                MasterGrid.IsEnabled = true;
+            }
+        }
+
+        private void MasterGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (MasterGrid.SelectedItem is WarningItem selected)
+            {
+                DetailTitle.Text = selected.Title;
+                DetailDesc.Text = selected.FullDescription;
+                DetailDialog.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void CloseDialog_Click(object sender, RoutedEventArgs e)
+        {
+            DetailDialog.Visibility = Visibility.Collapsed;
         }
     }
 }
