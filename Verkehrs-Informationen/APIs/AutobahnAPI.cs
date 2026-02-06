@@ -3,22 +3,35 @@ using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Verkehrs_Informationen.Models;
+using System.Diagnostics;
 
 namespace Verkehrs_Informationen.APIs;
 
-public class AutobahnService
+public class AutobahnAPI
 {
     private static readonly HttpClient _httpClient = new HttpClient
     {
-        BaseAddress = new Uri("https://autobahn.api.bund.dev/roadmaps/")
+        BaseAddress = new Uri("https://verkehr.autobahn.de/o/autobahn/")
     };
 
-    public async Task<List<WarningItem>?> GetWarningsAsync(string roadId)
+    public async Task<List<WarningItem>?> GetWarnings(string roadId)
     {
         try
         {
-            var response = await _httpClient.GetFromJsonAsync<WarningResponse>($"{roadId}/services/warning");
-            return response?.Warning ?? new List<WarningItem>();
+            var response = await _httpClient.GetFromJsonAsync<Warning>($"{roadId}/services/warning");
+            if (response?.Warnings != null)
+            {
+                Debug.WriteLine($"Anzahl Warnungen: {response.Warnings.Count}");
+                return response.Warnings;
+            }
+            else
+            {
+                Debug.WriteLine("API Antwort erhalten, aber Warnings-Liste war null oder leer.");
+                return new List<WarningItem>(); // Gib lieber eine leere Liste zurück als null
+            }
+
+            return response?.Warnings;
         }
         catch (Exception ex)        {
             Console.WriteLine($"Fehler beim Abruf: {ex.Message}");

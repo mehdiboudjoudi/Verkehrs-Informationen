@@ -10,5 +10,11 @@
         Title="MainWindow" Height="450" Width="800">
     <Grid>
 
+        <StackPanel>
+            <TextBox x:Name="RoadInput" Text="A1" Margin="10"/>
+            <Button Content="Warnungen laden" Click="LoadWarnings_Click" Margin="10"/>
+            <ListBox x:Name="WarningList" DisplayMemberPath="Title" Height="200" Margin="10"/>
+        </StackPanel>
+
     </Grid>
 </Window>
