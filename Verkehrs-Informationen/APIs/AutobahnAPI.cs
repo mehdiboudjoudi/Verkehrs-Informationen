@@ -28,13 +28,28 @@ public class AutobahnAPI
             else
             {
                 Debug.WriteLine("API Antwort erhalten, aber Warnings-Liste war null oder leer.");
-                return new List<WarningItem>(); // Gib lieber eine leere Liste zurück als null
+                return new List<WarningItem>();
             }
 
             return response?.Warnings;
         }
         catch (Exception ex)        {
             Console.WriteLine($"Fehler beim Abruf: {ex.Message}");
+            return null;
+        }
+    }
+
+    public async Task<List<WarningItem>?> GetClosures(string roadId)
+    {
+        try
+        {
+            // Korrekter Pfad: services/closure
+            var response = await _httpClient.GetFromJsonAsync<Closure>($"{roadId}/services/closure");
+            return response?.Closures ?? new List<WarningItem>();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Fehler Closures: {ex.Message}");
             return null;
         }
     }
