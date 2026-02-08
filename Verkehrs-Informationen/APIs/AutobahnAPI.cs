@@ -15,6 +15,29 @@ public class AutobahnAPI
         BaseAddress = new Uri("https://verkehr.autobahn.de/o/autobahn/")
     };
 
+    public async Task<Road> GetRoads()
+    {
+        try
+        {
+            var response = await _httpClient.GetFromJsonAsync<Road>("");
+            if (response != null)
+            {
+                Debug.WriteLine($"Anzahl Straßen: {response.Roads.Count}");
+                return response;
+            }
+            else
+            {
+                Debug.WriteLine("API Antwort erhalten, aber Straßenliste war null oder leer.");
+                return new Road();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Fehler beim Abruf: {ex.Message}");
+            return new Road();
+        }
+    }
+
     public async Task<List<WarningItem>?> GetWarnings(string roadId)
     {
         try
@@ -28,7 +51,7 @@ public class AutobahnAPI
             else
             {
                 Debug.WriteLine("API Antwort erhalten, aber Warnings-Liste war null oder leer.");
-                return new List<WarningItem>(); // Gib lieber eine leere Liste zurück als null
+                return new List<WarningItem>();
             }
 
             return response?.Warnings;

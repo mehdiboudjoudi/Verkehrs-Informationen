@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Verkehrs_Informationen.APIs;
+using Verkehrs_Informationen.Models.ViewModels;
 
 namespace Verkehrs_Informationen.Views
 {
@@ -11,24 +12,6 @@ namespace Verkehrs_Informationen.Views
         public MainWindow()
         {
             InitializeComponent();
-        }
-
-        private async void LoadWarnings_Click(object sender, RoutedEventArgs e)
-        {
-            string roadId = RoadInput.Text;
-
-            var service = new AutobahnAPI();
-
-            var warnings = await service.GetWarnings(roadId);
-
-            if (warnings != null)
-            {
-                WarningList.ItemsSource = warnings;
-            }
-            else
-            {
-                MessageBox.Show("Fehler beim Laden der Daten.");
-            }
         }
     }
 }
