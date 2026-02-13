@@ -27,8 +27,6 @@ namespace Verkehrs_Informationen.Models
         [JsonPropertyName("description")]
         public List<string> DescriptionList { get; set; } = new();
 
-        // 1. Umbenennen in 'FullDescription' (vermeidet Kollision)
-        // 2. JsonIgnore hinzufügen (Serializer ignoriert dieses Feld)
         [JsonIgnore]
         public string FullDescription => DescriptionList != null ? string.Join("\n", DescriptionList) : "";
 
