@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using Verkehrs_Informationen.APIs;
+using Verkehrs_Informationen.Models.ViewModels;
 using Verkehrs_Informationen.Models;
 
 namespace Verkehrs_Informationen.Views
