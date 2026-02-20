@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Verkehrs_Informationen.Database.Models
 
 {
-    public class WarningItemEntity
+    public class WarningEntity
     {
         [Key]
         public int Id { get; set; }
