@@ -8,9 +8,14 @@ namespace Verkehrs_Informationen.Models
         [JsonPropertyName("warning")] public List<WarningItem>? Warnings { get; set; }
     }
 
-    public class Closure
+    public class ClosedRoad
     {
-        [JsonPropertyName("closure")] public List<WarningItem>? Closures { get; set; }
+        [JsonPropertyName("closure")] public List<WarningItem>? ClosedRoads { get; set; }
+    }
+
+    public class RoadWork
+    {
+        [JsonPropertyName("roadworks")] public List<WarningItem>? RoadWorks { get; set; }
     }
 
     public class WarningItem

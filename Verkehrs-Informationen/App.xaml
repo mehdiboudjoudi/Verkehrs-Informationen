@@ -6,6 +6,7 @@
              xmlns:views="clr-namespace:Verkehrs_Informationen.Views"
              >
     <Application.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <DataTemplate DataType="{x:Type vm:MainViewModel}">
             <views:MainWindow/>
         </DataTemplate>
