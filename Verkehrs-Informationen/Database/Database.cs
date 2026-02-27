@@ -4,7 +4,10 @@ using Verkehrs_Informationen.Models;
 
 public class MyDatabaseContext : DbContext
 {
-    public DbSet<WarningItemEntity> WarningItems { get; set; }
+    public DbSet<WarningEntity> Warning { get; set; }
+    public DbSet<ClosureEntity> Closure { get; set; }
+    public DbSet<RoadWorkEntity> RoadWork { get; set; }
+    public DbSet<RoadIdEntity> Road { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

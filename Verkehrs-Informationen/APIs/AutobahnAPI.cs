@@ -86,7 +86,6 @@ public class AutobahnAPI
     {
         try
         {
-            // Correct API endpoint path for road closures
             var response = await _httpClient.GetFromJsonAsync<ClosedRoad>($"{roadId}/services/closure");
             return response?.ClosedRoads ?? new List<WarningItem>();
         }
