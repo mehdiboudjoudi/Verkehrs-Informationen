@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Verkehrs_Informationen.APIs;
 using Verkehrs_Informationen.Models;
-using Verkehrs_Informationen.Database.Models; // WICHTIG für die DB-Entities
+using Verkehrs_Informationen.Database.Models;
 
 namespace Verkehrs_Informationen.Models.ViewModels
 {
@@ -33,7 +33,7 @@ namespace Verkehrs_Informationen.Models.ViewModels
             {
                 _selectedRoad = value;
                 OnPropertyChanged();
-                // API-Call starten, sobald der Nutzer eine Straße auswählt
+         
                 LoadDataCommand.Execute(null);
             }
         }
@@ -91,14 +91,11 @@ namespace Verkehrs_Informationen.Models.ViewModels
             CloseDialogCommand = new RelayCommand(_ => IsDialogVisible = false);
         }
 
-        /// <summary>
-        /// Läd die zuletzt gespeicherten Daten aus der lokalen Datenbank beim Programmstart.
-        /// </summary>
+       
         public void LoadDataFromDatabase()
         {
             using var db = new MyDatabaseContext();
 
-            // 1. Die zuletzt gewählte Straße laden
             var savedRoad = db.Road.FirstOrDefault();
             if (savedRoad != null)
             {
@@ -106,7 +103,6 @@ namespace Verkehrs_Informationen.Models.ViewModels
                 OnPropertyChanged(nameof(SelectedRoad));
             }
 
-            // 2. Warnungen laden: Erst mit .ToList() in den Speicher holen, dann mappen!
             var savedWarnings = db.Warning.ToList();
             Warnings = new ObservableCollection<WarningItem>(savedWarnings.Select(w => new WarningItem
             {
@@ -116,7 +112,6 @@ namespace Verkehrs_Informationen.Models.ViewModels
                 DescriptionList = string.IsNullOrEmpty(w.FullDescription) ? new List<string>() : new List<string>(w.FullDescription.Split('\n'))
             }));
 
-            // 3. Sperrungen laden: Erst mit .ToList() in den Speicher holen, dann mappen!
             var savedClosures = db.Closure.ToList();
             ClosedRoads = new ObservableCollection<WarningItem>(savedClosures.Select(c => new WarningItem
             {
@@ -126,7 +121,6 @@ namespace Verkehrs_Informationen.Models.ViewModels
                 DescriptionList = string.IsNullOrEmpty(c.FullDescription) ? new List<string>() : new List<string>(c.FullDescription.Split('\n'))
             }));
 
-            // 4. Baustellen laden: Erst mit .ToList() in den Speicher holen, dann mappen!
             var savedRoadWorks = db.RoadWork.ToList();
             RoadWorks = new ObservableCollection<WarningItem>(savedRoadWorks.Select(r => new WarningItem
             {
@@ -142,32 +136,25 @@ namespace Verkehrs_Informationen.Models.ViewModels
             if (string.IsNullOrEmpty(_selectedRoad))
                 return;
 
-            // 1. Frische Daten aus der API laden
             await LoadWarnings();
             await LoadClosedRoads();
             await LoadRoadWorks();
 
-            // 2. Sobald alles geladen ist, die Datenbank wipen und neu füllen!
             await SaveDataToDatabaseAsync();
         }
 
-        /// <summary>
-        /// Löscht die komplette Datenbank und speichert die frisch aus der API geladenen Daten.
-        /// </summary>
+       
         private async Task SaveDataToDatabaseAsync()
         {
             using var db = new MyDatabaseContext();
 
-            // 1. ALLES aus den Tabellen löschen (Wipe)
             db.Warning.RemoveRange(db.Warning);
             db.Closure.RemoveRange(db.Closure);
             db.RoadWork.RemoveRange(db.RoadWork);
             db.Road.RemoveRange(db.Road);
 
-            // 2. Die neue RoadId einfügen
             db.Road.Add(new RoadIdEntity { Road = _selectedRoad });
 
-            // 3. Die neuen Daten einfügen (DTO -> Entity Mapping)
             db.Warning.AddRange(Warnings.Select(w => new WarningEntity
             {
                 Title = w.Title,
@@ -192,7 +179,6 @@ namespace Verkehrs_Informationen.Models.ViewModels
                 FullDescription = r.FullDescription
             }));
 
-            // 4. In der Datenbank speichern
             await db.SaveChangesAsync();
         }
 

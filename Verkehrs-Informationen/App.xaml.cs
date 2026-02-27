@@ -13,7 +13,6 @@ namespace Verkehrs_Informationen
 
         public App()
         {
-            // Lade die Liste aller Autobahnen im Hintergrund
             Task.Run(async () => mainViewModel.Roads = await autobahnAPI.GetRoads()).Wait();
         }
 
@@ -21,7 +20,6 @@ namespace Verkehrs_Informationen
         {
             base.OnStartup(e);
 
-            // Lade die zwischengespeicherten Daten aus der DB in das ViewModel!
             mainViewModel.LoadDataFromDatabase();
 
             MainWindow mainWindow = new MainWindow();
